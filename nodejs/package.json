@@ -1,0 +1,22 @@
+{
+  "name": "esp8266-mqtt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": "4.0.0"
+  },
+  "author": "Gires Ntchouayang",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "mqtt": "^2.15.0",
+    "mysql": "^2.13.0",
+    "pug": "^2.0.0-rc.2",
+    "socket.io": "^2.0.4",
+    "vis": "^4.20.1"
+  }
+}
