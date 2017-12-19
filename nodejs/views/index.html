@@ -1,0 +1,238 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
+  <title>ESP8266 | MQTT</title>
+
+  <style type="text/css">
+    body, html, select {
+      font: 10pt sans-serif;
+    }
+  </style>
+
+  <script src="scripts/vis.js"></script>
+  <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+  <link href="scripts/vis.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<h2>ESP8266 | Sensordaten mit Mqtt visualisieren</h2>
+<h3>Sensorentyp: DHT11, HCSR04</h3>
+<h4>Mqtt topics: sensor/humidity, sensor/distance, sensor/temperature.</h4>
+<p>
+  <label for="strategy">Anzeigetyp:</label>
+  <select id="strategy">
+    <option value="discrete">Diskret</option>
+    <option value="static">Statisch</option>
+  </select>
+</p>
+
+<div class="block" style="margin-top: 40px; padding-top: 30px; padding-bottom: 30px; border-top: solid #ccd6e2 1px; border-bottom: solid #ccd6e2 1px;">
+  <div class="blockContent" style="display: flex;">
+    <div class="blockLeft" style="flex-grow: 1; flex-basis: 0; margin-right: 15px;">
+      <div style="margin: auto; display: flex; justify-content: center; font-weight: 700; font-family: verdana; padding-bottom: 30px;">
+        <span id="temp-text">Temperatur: </span>
+      </div>
+      <div id="temperature"></div>
+    </div>
+  
+    <div class="blockMiddle" style="flex-grow: 1; flex-basis: 0;">
+      <div style="margin: auto; display: flex; justify-content: center; font-weight: 700; font-family: verdana; padding-bottom: 30px;">
+        <span id="hum-text">Luftfeuchtigkeit: </span>
+      </div>
+      <div id="humidity"></div>
+    </div>
+    <div class="blockRight" style="flex-grow: 1; flex-basis: 0; padding-left: 15px;">
+      <div style="margin: auto; display: flex; justify-content: center; font-weight: 700; font-family: verdana; padding-bottom: 30px;">
+        <span id="dis-text">Entfernung: </span>
+      </div>
+      <div id="distance"></div>
+    </div>
+  </div>
+
+<script type="text/javascript">
+  var socket = io.connect("/");
+
+  var strategy = document.getElementById('strategy');
+
+  // create a graph2d with an (currently empty) dataset
+  var container1 = document.getElementById('temperature');
+  var container2 = document.getElementById('humidity');
+  var container3 = document.getElementById('distance');
+  var tempText = document.getElementById('temp-text');
+  var humText = document.getElementById('hum-text');
+  var disText = document.getElementById('dis-text');
+  var dataset1 = new vis.DataSet();
+  var dataset2 = new vis.DataSet();
+  var dataset3 = new vis.DataSet();
+
+  var options1 = {
+    start: vis.moment().add(-100, 'seconds'), // changed so its faster
+    end: vis.moment(),
+    dataAxis: {
+      left: {
+        range: {
+          min:-20, max: 40
+        },
+        title: {text: "Temperatur (&deg;C)"}
+      }
+    },
+    drawPoints: {
+      style: 'circle' // square, circle
+    },
+    shaded: {
+      orientation: 'bottom' // top, bottom
+    }
+  };
+  var options2 = {
+    start: vis.moment().add(-100, 'seconds'), // changed so its faster
+    end: vis.moment(),
+    dataAxis: {
+      left: {
+        range: {
+          min:0, max: 100
+        },
+        title: {text: "Luftfeuchtigkeit (%)"}
+      }
+    },
+    drawPoints: {
+      style: 'circle' // square, circle
+    },
+    shaded: {
+      orientation: 'bottom' // top, bottom
+    }
+  };
+  var options3 = {
+    start: vis.moment().add(-100, 'seconds'), // changed so its faster
+    end: vis.moment(),
+    dataAxis: {
+      left: {
+        range: {
+          min: 0, max: 100
+        },
+        title: {text: "Entfernung (cm)"}
+      }
+    },
+    drawPoints: {
+      style: 'circle' // square, circle
+    },
+    shaded: {
+      orientation: 'bottom' // top, bottom
+    }
+  };
+  var graphTemp = new vis.Graph2d(container1, dataset1, options1);
+  var graphHum = new vis.Graph2d(container2, dataset2, options2);
+  var graphDist = new vis.Graph2d(container3, dataset3, options3);
+
+  function renderGraph(graph) {
+    // move the window (you can think of different strategies).
+    var now = vis.moment();
+    var range = graph.getWindow();
+    var interval = range.end - range.start;
+    switch (strategy.value) {
+      case 'discrete':
+        graph.setWindow(now - interval, now, {animation: false});
+        break;
+
+      default: // 'static'
+        // move the window 90% to the left when now is larger than the end of the window
+        if (now > range.end) {
+          graph.setWindow(now - 0.1 * interval, now + 0.9 * interval);
+        }
+        break;
+    }
+  }
+  renderGraph(graphTemp);
+  renderGraph(graphHum);
+  renderGraph(graphDist);
+  function addTempData(temp) {
+    // add a new data point to the dataset
+    var now = vis.moment();
+    dataset1.add({
+      x: now,
+      y: temp
+    });
+
+    // remove all data points which are no longer visible
+    var range = graphTemp.getWindow();
+    var interval = range.end - range.start;
+    var oldIds = dataset1.getIds({
+      filter: function (item) {
+        return item.x < range.start - interval;
+      }
+    });
+    dataset1.remove(oldIds);
+  }
+
+  function addHumData(hum) {
+    // add a new data point to the dataset
+    var now = vis.moment();
+    dataset2.add({
+      x: now,
+      y: hum
+    });
+
+    // remove all data points which are no longer visible
+    var range = graphHum.getWindow();
+    var interval = range.end - range.start;
+    var oldIds = dataset2.getIds({
+      filter: function (item) {
+        return item.x < range.start - interval;
+      }
+    });
+    dataset2.remove(oldIds);
+  }
+
+  function addDistData(dis) {
+    // add a new data point to the dataset
+    var now = vis.moment();
+    dataset3.add({
+      x: now,
+      y: dis
+    });
+
+    // remove all data points which are no longer visible
+    var range = graphDist.getWindow();
+    var interval = range.end - range.start;
+    var oldIds = dataset3.getIds({
+      filter: function (item) {
+        return item.x < range.start - interval;
+      }
+    });
+    dataset3.remove(oldIds);
+  }
+
+  socket.on('mqtt', payload => {
+    switch(payload.topic){
+      case "sensor/temperature":
+        var temp = parseInt(payload.data, 10);
+        if(!isNaN(temp)){
+          addTempData(temp);
+          renderGraph(graphTemp);
+          tempText.innerHTML = 'Temperatur: ' + temp + ' &deg;C';
+        }
+      break;
+      case "sensor/humidity":
+        var hum = parseInt(payload.data, 10);
+        if(!isNaN(hum)){
+          addHumData(hum);
+          renderGraph(graphHum);
+          humText.innerHTML = 'Luftfeuchtigkeit: ' + hum + '%';
+        }
+      break;
+      case "sensor/distance":
+        var dis = parseInt(payload.data, 10);
+        if(!isNaN(dis)){
+          addDistData(dis);
+          renderGraph(graphDist);
+          disText.innerHTML = 'Entfernung: ' + dis + ' cm';
+        }
+      break;
+      default:
+      break;
+    }
+  });
+</script>
+</body>
+</html>
