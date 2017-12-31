@@ -6,8 +6,8 @@
  
 long duration, distance; // Duration used to calculate distance
 
-const char* ssid = "Meno Soap 7515";
-const char* password = "#Xenyou01091993;";
+const char* ssid = "XenYou";
+const char* password = "Nngpedson1";
 //const char* ssid = "DarkMachine";
 //const char* password = "pedsonpro";
 
