@@ -10,11 +10,11 @@ DHT dht(dhtPin, type);
  
 long duration, distance;
 
-//const char* ssid = "DarkMachine";
-//const char* password = "pedsonpro";
-const char* ssid = "XenYou";
-const char* password = "Nngpedson1";
-const char* mqtt_server = "192.168.178.56";
+const char* ssid = "DarkMachine";
+const char* password = "pedsonpro";
+//const char* ssid = "XenYou";
+//const char* password = "Nngpedson1";
+const char* mqtt_server = "192.168.1.31";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -77,7 +77,7 @@ void loop() {
   client.loop();
   
   long now = millis();
-  if (now - lastMsg > 1000) {
+  if (now - lastMsg > 5000) {
     lastMsg = now;
     float hu = dht.readHumidity();
     if(isnan(hu)){

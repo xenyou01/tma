@@ -9,7 +9,7 @@ var mqtt = require('mqtt');
   port: 8883,
   host: '192.168.178.56'
 };*/
-var client  = mqtt.connect('mqtt://192.168.178.56');
+var client  = mqtt.connect('mqtt://192.168.1.31');
 
 app.use(express.static(__dirname + '/views'));
 app.use('/scripts', express.static(__dirname + '/node_modules/vis/dist/'));

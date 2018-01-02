@@ -6,12 +6,12 @@
  
 long duration, distance; // Duration used to calculate distance
 
-const char* ssid = "XenYou";
-const char* password = "Nngpedson1";
-//const char* ssid = "DarkMachine";
-//const char* password = "pedsonpro";
+//const char* ssid = "XenYou";
+//const char* password = "Nngpedson1";
+const char* ssid = "DarkMachine";
+const char* password = "pedsonpro";
 
-const char* mqtt_server = "192.168.178.56";
+const char* mqtt_server = "192.168.1.31";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
