@@ -6,12 +6,12 @@
  
 long duration, distance; // Duration used to calculate distance
 
-//const char* ssid = "XenYou";
-//const char* password = "Nngpedson1";
-const char* ssid = "DarkMachine";
-const char* password = "pedsonpro";
+const char* ssid = "Meno Soap 7515";
+const char* password = "#Xenyou01091993;";
+//const char* ssid = "DarkMachine";
+//const char* password = "pedsonpro";
 
-const char* mqtt_server = "192.168.1.31";
+const char* mqtt_server = "192.168.178.56";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -27,6 +27,7 @@ void setup() {
   client.setCallback(callback);
 }
 
+//Connect to Wifi and print the IP
 void setup_wifi() {
 
   delay(10);
@@ -47,6 +48,7 @@ void setup_wifi() {
   Serial.println(WiFi.localIP());
 }
 
+//No Need to implement this
 void callback(char* topic, byte* payload, unsigned int length) {
 }
 
@@ -55,7 +57,7 @@ void reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (client.connect("ESP8266Client")) {
+    if (client.connect("ESP8266Client2")) {
       Serial.println("connected");
       client.subscribe("inTopic");
     } else {
@@ -72,10 +74,10 @@ void loop() {
   if (!client.connected()) {
     reconnect();
   }
-  client.loop();
+  //client.loop();
 
   long now = millis();
-  if (now - lastMsg > 5000) {
+  if (now - lastMsg > 2000) {
     lastMsg = now;
     digitalWrite(trigPin, LOW);
     delayMicroseconds(2);

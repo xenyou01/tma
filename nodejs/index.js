@@ -9,7 +9,7 @@ var mqtt = require('mqtt');
   port: 8883,
   host: '192.168.178.56'
 };*/
-var client  = mqtt.connect('mqtt://192.168.1.31');
+var client  = mqtt.connect('mqtt://192.168.178.56');
 
 app.use(express.static(__dirname + '/views'));
 app.use('/scripts', express.static(__dirname + '/node_modules/vis/dist/'));
@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-
+//Subscribe all Topic by connection
 client.on('connect', function () {
 	console.log("Connected to mqtt broker");
   client.subscribe('sensor/humidity');
@@ -27,6 +27,7 @@ client.on('connect', function () {
   client.subscribe('sensor/temperature');
 })
 
+//send incomming message to all clients
 client.on('message', function (topic, message) {
   // message is Buffer
   console.log(String(topic) + ": " + String(message));
@@ -38,7 +39,6 @@ app.get('/', function(req, res) {
 	res.render('index', function(err, html) {
   		res.send(html);
 	});
-	// res.render('index', { data: results });
     });
 
 

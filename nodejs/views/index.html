@@ -56,19 +56,20 @@
 
   var strategy = document.getElementById('strategy');
 
-  // create a graph2d with an (currently empty) dataset
   var container1 = document.getElementById('temperature');
   var container2 = document.getElementById('humidity');
   var container3 = document.getElementById('distance');
   var tempText = document.getElementById('temp-text');
   var humText = document.getElementById('hum-text');
   var disText = document.getElementById('dis-text');
+
+  // create the graph2d with (currently empty) datasets
   var dataset1 = new vis.DataSet();
   var dataset2 = new vis.DataSet();
   var dataset3 = new vis.DataSet();
 
   var options1 = {
-    start: vis.moment().add(-25, 'seconds'), // changed so its faster
+    start: vis.moment().add(-30, 'seconds'), // changed so its faster
     end: vis.moment(),
     dataAxis: {
       left: {
@@ -86,7 +87,7 @@
     }
   };
   var options2 = {
-    start: vis.moment().add(-25, 'seconds'), // changed so its faster
+    start: vis.moment().add(-30, 'seconds'), // changed so its faster
     end: vis.moment(),
     dataAxis: {
       left: {
@@ -104,7 +105,7 @@
     }
   };
   var options3 = {
-    start: vis.moment().add(-25, 'seconds'), // changed so its faster
+    start: vis.moment().add(-30, 'seconds'), // changed so its faster
     end: vis.moment(),
     dataAxis: {
       left: {
@@ -126,7 +127,7 @@
   var graphDist = new vis.Graph2d(container3, dataset3, options3);
 
   function renderGraph(graph) {
-    // move the window (you can think of different strategies).
+    // move the window.
     var now = vis.moment();
     var range = graph.getWindow();
     var interval = range.end - range.start;

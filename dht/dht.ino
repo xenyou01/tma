@@ -4,17 +4,17 @@
 //#include <DHT11.h>
 
 #define dhtPin 2
-#define type DHT11
+#define type DHT11 //DHT22
 
 DHT dht(dhtPin, type);
  
 long duration, distance;
 
-const char* ssid = "DarkMachine";
-const char* password = "pedsonpro";
-//const char* ssid = "XenYou";
-//const char* password = "Nngpedson1";
-const char* mqtt_server = "192.168.1.31";
+//const char* ssid = "DarkMachine";
+//const char* password = "pedsonpro";
+const char* ssid = "Meno Soap 7515";
+const char* password = "#Xenyou01091993;";
+const char* mqtt_server = "192.168.178.56";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -29,6 +29,7 @@ void setup() {
   client.setCallback(callback);
 }
 
+//Connect and print the IP
 void setup_wifi() {
 
   delay(10);
@@ -74,10 +75,10 @@ void loop() {
   if (!client.connected()) {
     reconnect();
   }
-  client.loop();
+  //client.loop();
   
   long now = millis();
-  if (now - lastMsg > 5000) {
+  if (now - lastMsg > 2000) {
     lastMsg = now;
     float hu = dht.readHumidity();
     if(isnan(hu)){
